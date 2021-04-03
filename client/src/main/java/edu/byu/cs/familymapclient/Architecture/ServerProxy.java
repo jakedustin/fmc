@@ -18,7 +18,6 @@ import Requests.RegisterRequest;
 import Results.LoginResult;
 import Results.PersonResult;
 import Results.RegisterResult;
-import edu.byu.cs.familymapclient.Architecture.DataCache;
 
 public class ServerProxy {
 
