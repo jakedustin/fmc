@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Family_Map_Client.iml" filepath="$PROJECT_DIR$/.idea/modules/Family_Map_Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Family_Map_Client.client.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Family_Map_Client.client.iml" />
+    </modules>
+  </component>
+</project>

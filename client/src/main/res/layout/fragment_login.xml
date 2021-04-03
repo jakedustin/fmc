@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="NestedScrolling"
+    android:layout_width="wrap_content"
+    android:gravity="center"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="fill_parent">
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:stretchColumns="3"
+        tools:context=".Activities.MainActivity"
+        android:padding="24dp"
+        android:id="@+id/login_fragment">
+
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/server_host"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/server_host"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="text"
+                tools:text="10.00.0.1"
+                tools:ignore="RtlCompat" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/server_port"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/server_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="text"
+                tools:text="8080"
+                tools:ignore="RtlCompat" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/username"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="text"
+                tools:text="jakeydus"
+                tools:ignore="RtlCompat"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/password"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="textPassword"
+                tools:text="password1"
+                tools:ignore="RtlCompat"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/first_name"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/first_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="textPersonName"
+                tools:text="Jake"
+                tools:ignore="RtlCompat"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/last_name"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/last_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="textPersonName"
+                tools:text="Dustin"
+                tools:ignore="RtlCompat"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="@string/email"/>
+            <EditText
+                android:textAlignment="viewStart"
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_span="3"
+                android:inputType="textEmailAddress"
+                tools:text="jacobod@byu.edu"
+                tools:ignore="RtlCompat"/>
+        </TableRow>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+            <CheckBox
+                android:id="@+id/female_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:text="@string/gender_female"
+                android:onClick="onCheckboxClicked"/>
+            <CheckBox
+                android:id="@+id/male_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gender_male"
+                android:onClick="onCheckboxClicked"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/register_button"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:text="@string/register"
+                android:enabled="false"
+                />
+            <Button
+                android:id="@+id/login_button"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/login"
+                android:enabled="false"
+                />
+        </LinearLayout>
+
+
+    </TableLayout>
+
+</ScrollView>
