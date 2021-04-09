@@ -15,4 +15,5 @@
     <string name="gender_male">Male</string>
     <string name="gender_female">Female</string>
     <string name="title_activity_maps">Map</string>
+    <string name="map_fragment_message">This is my map fragment!</string>
 </resources>

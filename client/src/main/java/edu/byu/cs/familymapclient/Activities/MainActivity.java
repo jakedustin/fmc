@@ -10,6 +10,7 @@ import android.os.PersistableBundle;
 import android.util.Log;
 
 import edu.byu.cs.familymapclient.Fragments.LoginFragment;
+import edu.byu.cs.familymapclient.Fragments.MapFragment;
 import edu.byu.cs.familymapclient.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new LoginFragment();
+            // fragment = new LoginFragment();
+            fragment = new MapFragment();
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
