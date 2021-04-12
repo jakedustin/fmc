@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/RecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.SearchActivity">
+    tools:context=".Activities.SearchActivity"
+    android:orientation="vertical"
+    tools:ignore="ExtraText">
 
-</androidx.recyclerview.widget.RecyclerView>
+
+    // search view will go here
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="@string/search_box_hint"
+        android:inputType="textNoSuggestions"
+        />
+    // recycler view will go here
+
+
+
+</LinearLayout>
