@@ -19,4 +19,12 @@
     <string name="search_box_hint">Search for&#8239;</string>
     <string name="settings_menu">Settings</string>
     <string name="search">Search</string>
+    <string name="show_spouse_lines">Show spouse lines</string>
+    <string name="show_life_story_lines">Show life story lines</string>
+    <string name="family_tree_lines">Family tree lines</string>
+    <string name="show_father_s_side">Show father\'s side</string>
+    <string name="show_mother_s_side">Show mother\'s side</string>
+    <string name="show_male_events">Show male events</string>
+    <string name="show_female_events">Show female events</string>
+    <string name="logout">Logout</string>
 </resources>
