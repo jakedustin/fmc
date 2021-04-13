@@ -21,7 +21,7 @@
     <string name="search">Search</string>
     <string name="show_spouse_lines">Show spouse lines</string>
     <string name="show_life_story_lines">Show life story lines</string>
-    <string name="family_tree_lines">Family tree lines</string>
+    <string name="family_tree_lines">Show family tree lines</string>
     <string name="show_father_s_side">Show father\'s side</string>
     <string name="show_mother_s_side">Show mother\'s side</string>
     <string name="show_male_events">Show male events</string>

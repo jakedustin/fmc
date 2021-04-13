@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
+import edu.byu.cs.familymapclient.Architecture.DataCache;
 import edu.byu.cs.familymapclient.Fragments.LoginFragment;
 import edu.byu.cs.familymapclient.Fragments.MapFragment;
 import edu.byu.cs.familymapclient.R;
@@ -24,14 +25,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        Fragment fragment; // = fm.findFragmentById(R.id.fragment_container);
 
-        if (fragment == null) {
+        if (DataCache.getInstance().getAuthtoken() == null) {
             fragment = new LoginFragment();
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
         }
+        else {
+            fragment = new MapFragment();
+        }
+
+        fm.beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
     }
 
     @Override

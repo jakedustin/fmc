@@ -1,5 +1,6 @@
 package edu.byu.cs.familymapclient.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +34,9 @@ import java.util.Random;
 
 import Models.Event;
 import Models.Person;
+import edu.byu.cs.familymapclient.Activities.MainActivity;
+import edu.byu.cs.familymapclient.Activities.SearchActivity;
+import edu.byu.cs.familymapclient.Activities.SettingsActivity;
 import edu.byu.cs.familymapclient.Architecture.DataCache;
 import edu.byu.cs.familymapclient.Architecture.Settings;
 import edu.byu.cs.familymapclient.R;
@@ -60,6 +64,22 @@ public class MapFragment extends Fragment implements
         inflater.inflate(R.menu.fragment_map, menu);
         MenuItem searchItem = menu.findItem(R.id.search_mag_icon);
         MenuItem settingsItem = menu.findItem(R.id.settings_icon);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search_mag_icon:
+                Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(searchIntent);
+                return true;
+            case R.id.settings_icon:
+                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
