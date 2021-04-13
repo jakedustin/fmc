@@ -19,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -158,6 +160,7 @@ public class LoginFragment extends Fragment {
                             String personName = bundle.getString("FIRST_NAME") + " " + bundle.getString("LAST_NAME");
 
                             Toast.makeText(getActivity(), personName, Toast.LENGTH_SHORT).show();
+                            openMap();
                         }
                     }
                 };
@@ -192,10 +195,9 @@ public class LoginFragment extends Fragment {
                             }
                         }
                         else if (bundle.containsKey("FIRST_NAME")) {
-
                             String personName = bundle.getString("FIRST_NAME") + " " + bundle.getString("LAST_NAME");
-
                             Toast.makeText(getActivity(), personName, Toast.LENGTH_SHORT).show();
+                            openMap();
                         }
                     }
                 };
@@ -207,6 +209,15 @@ public class LoginFragment extends Fragment {
         });
 
         return v;
+    }
+
+    private void openMap() {
+        Fragment mapFragment = new MapFragment();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, mapFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     private boolean validLogin() {
