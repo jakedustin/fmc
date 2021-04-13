@@ -1,5 +1,6 @@
 package edu.byu.cs.familymapclient.Architecture;
 
+import Models.Event;
 import Models.Person;
 
 public class DataCache {
@@ -27,6 +28,7 @@ public class DataCache {
     private String mEmail;
     private String mGender;
     private Person[] persons;
+    private Event[] events;
 
     public String getPersonID() {
         return mPersonID;
@@ -116,5 +118,11 @@ public class DataCache {
         this.persons = persons;
     }
 
+    public Event[] getEvents() {
+        return events;
+    }
 
+    public void setEvents(Event[] events) {
+        this.events = events;
+    }
 }

@@ -14,7 +14,7 @@ public class Settings {
 
     private Settings() {}
 
-    boolean mShowSpouseLines;
+    boolean mShowSpouseLines = false;
     boolean mShowFamilyTreeLines;
     boolean mShowLifeStoryLines;
     boolean mFilterByFathersSide;

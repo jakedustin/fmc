@@ -41,7 +41,8 @@ public class LoginTask implements Runnable {
         messageBundle.putBoolean(SUCCESS, mLoginResult.isSuccess());
         message.setData(messageBundle);
 
-        serverProxy.sendPersonsRequest(mServerHost, mServerPort, mLoginResult.getPersonID(), mLoginResult.getAuthtoken());
+        serverProxy.sendPersonsRequest(mServerHost, mServerPort, mLoginResult.getAuthtoken());
+        serverProxy.sendEventsRequest(mServerHost, mServerPort, mLoginResult.getAuthtoken());
         this.mMessageHandler.sendMessage(message);
     }
 }

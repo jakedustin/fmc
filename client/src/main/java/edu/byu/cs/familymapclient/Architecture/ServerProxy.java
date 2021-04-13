@@ -15,6 +15,7 @@ import java.net.URL;
 
 import Requests.LoginRequest;
 import Requests.RegisterRequest;
+import Results.EventResult;
 import Results.LoginResult;
 import Results.PersonResult;
 import Results.RegisterResult;
@@ -127,7 +128,7 @@ public class ServerProxy {
         }
     }
 
-    public void sendPersonsRequest(String serverHost, String serverPort, String personID, String authtoken) {
+    public void sendPersonsRequest(String serverHost, String serverPort, String authtoken) {
         try {
             URL url = new URL("http://" + serverHost + ":" + serverPort + "/person");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -141,6 +142,28 @@ public class ServerProxy {
                 Gson gson = new Gson();
                 PersonResult personResult = gson.fromJson(readString(connection.getInputStream()), PersonResult.class);
                 DataCache.getInstance().setPersons(personResult.getData());
+            }
+        } catch (MalformedURLException m) {
+            Log.i(SERVER_PROXY, m.getMessage());
+        } catch (IOException i) {
+            Log.i(SERVER_PROXY, i.getMessage());
+        }
+    }
+
+    public void sendEventsRequest(String serverHost, String serverPort, String authtoken) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/event");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", authtoken);
+            connection.setDoOutput(false);
+            connection.connect();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // get login result and return it
+                Gson gson = new Gson();
+                EventResult eventResult = gson.fromJson(readString(connection.getInputStream()), EventResult.class);
+                DataCache.getInstance().setEvents(eventResult.getData());
             }
         } catch (MalformedURLException m) {
             Log.i(SERVER_PROXY, m.getMessage());

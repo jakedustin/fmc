@@ -47,7 +47,8 @@ public class RegisterTask implements Runnable {
         messageBundle.putBoolean(SUCCESS, mRegisterResult.isSuccess());
         message.setData(messageBundle);
 
-        serverProxy.sendPersonsRequest(mServerHost, mServerPort, mRegisterResult.getPersonID(), mRegisterResult.getAuthtoken());
+        serverProxy.sendPersonsRequest(mServerHost, mServerPort, mRegisterResult.getAuthtoken());
+        serverProxy.sendEventsRequest(mServerHost, mServerPort, mRegisterResult.getAuthtoken());
         this.mMessageHandler.sendMessage(message);
     }
 }
