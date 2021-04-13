@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -32,7 +34,9 @@ import edu.byu.cs.familymapclient.Architecture.DataCache;
 import edu.byu.cs.familymapclient.Architecture.Settings;
 import edu.byu.cs.familymapclient.R;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
+public class MapFragment extends Fragment implements
+        OnMapReadyCallback,
+        GoogleMap.OnMapLoadedCallback {
     private GoogleMap map;
 
     @Override
@@ -57,30 +61,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         map = googleMap;
         map.setOnMapLoadedCallback(this);
 
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.animateCamera(CameraUpdateFactory.newLatLng(sydney));
-
         Event[] events = DataCache.getInstance().getEvents();
         Person[] people = DataCache.getInstance().getPersons();
 
-        Map<String, String> mappedPeople = mapPeople(people);
         Map<String, Float> mappedColors = new HashMap<String, Float>();
         Map<PersonIdEventTypeMapKey, Event> mappedEvents = new HashMap<PersonIdEventTypeMapKey, Event>();
 
         for (Event event : events) {
-            if (!mappedColors.containsKey(event.getEventType())) {
+            if (!mappedColors.containsKey(event.getEventType().toLowerCase())) {
                 double d = (double) new Random().nextInt(360);
                 mappedColors.put(event.getEventType(), (float) d);
             }
 
-            mappedEvents.put(new PersonIdEventTypeMapKey(event.getPersonID(), event.getEventType()), event);
+            mappedEvents.put(new PersonIdEventTypeMapKey(event.getPersonID(), event.getEventType().toLowerCase()), event);
 
             LatLng x = new LatLng(event.getLatitude(), event.getLongitude());
             try {
                 Marker markerX = map.addMarker(new MarkerOptions()
                         .position(x)
-                        .icon(BitmapDescriptorFactory.defaultMarker(mappedColors.get(event.getEventType()))));
+                        .icon(BitmapDescriptorFactory.defaultMarker(mappedColors.get(event.getEventType().toLowerCase()))));
                 markerX.setTag(event.getEventID());
             } catch (NullPointerException n) {
                 System.out.println(n.getMessage());
@@ -90,6 +89,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (Settings.getInstance().isShowSpouseLines()) {
             addSpouseLines(map, people, mappedEvents);
         }
+
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String eventID = (String) marker.getTag();
+                Toast.makeText(getActivity(), eventID, Toast.LENGTH_SHORT).show();
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                return true;
+            }
+        });
     }
 
     private void addSpouseLines(GoogleMap map, Person[] people, Map<PersonIdEventTypeMapKey, Event> mappedEvents) {
@@ -101,8 +111,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
 
         for (Person person : peopleCopy) {
-            Event birthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getPersonID(), "Birth"));
-            Event spouseBirthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getSpouseID(), "Birth"));
+            Event birthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getPersonID(), "birth"));
+            Event spouseBirthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getSpouseID(), "birth"));
 
             Polyline p = map.addPolyline(new PolylineOptions().add(
                     new LatLng(birthEvent.getLatitude(), birthEvent.getLongitude()),
