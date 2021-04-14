@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -50,6 +51,7 @@ public class MapFragment extends Fragment implements
     private final static String EVENT_TYPE = "event_type";
     private final static String EVENT_LOCATION = "event_location";
     private final static String GENDER = "gender";
+    private final static String PERSON_ID = "person_id";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +69,6 @@ public class MapFragment extends Fragment implements
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_map, menu);
-        MenuItem searchItem = menu.findItem(R.id.search_mag_icon);
-        MenuItem settingsItem = menu.findItem(R.id.settings_icon);
     }
 
     @Override
@@ -101,25 +101,33 @@ public class MapFragment extends Fragment implements
         Event[] events = DataCache.getInstance().getEvents();
         Person[] people = DataCache.getInstance().getPersons();
 
-        Map<String, Float> mappedColors = new HashMap<String, Float>();
-        final Map<String, Person> mappedPersons = new HashMap<String, Person>();
-        final Map<String, Event> mappedSimpleEvents = new HashMap<String, Event>();
-        Map<PersonIdEventTypeMapKey, Event> mappedEvents = new HashMap<PersonIdEventTypeMapKey, Event>();
-
-        for (Person person : people) {
-            mappedPersons.put(person.getPersonID(), person);
-        }
-
-        for (Event event : events) {
-            mappedSimpleEvents.put(event.getEventID(), event);
-            if (!mappedColors.containsKey(event.getEventType().toLowerCase())) {
-                double d = (double) new Random().nextInt(360);
-                mappedColors.put(event.getEventType(), (float) d);
+        if (DataCache.getInstance().getColorMap() == null) {
+            DataCache.getInstance().setColorMap(new HashMap<String, Float>());
+            DataCache.getInstance().setPeopleMap(new HashMap<String, Person>());
+            DataCache.getInstance().setEventMap(new HashMap<String, Event>());
+            for (Event event : events) {
+                if (!DataCache.getInstance().getColorMap().containsKey(event.getEventType().toLowerCase())) {
+                    double d = (double) new Random().nextInt(360);
+                    DataCache.getInstance().getColorMap().put(event.getEventType(), (float) d);
+                }
+                DataCache.getInstance().getEventMap().put(event.getEventID(), event);
             }
 
-            mappedEvents.put(new PersonIdEventTypeMapKey(event.getPersonID(), event.getEventType().toLowerCase()), event);
+            for (Person person : people) {
+                DataCache.getInstance().getPeopleMap().put(person.getPersonID(), person);
+            }
 
+            getAssociatedEvents();
+            getChildren();
+        }
+
+        final Map<String, Float> mappedColors = DataCache.getInstance().getColorMap();
+        final Map<String, Person> mappedPeople = DataCache.getInstance().getPeopleMap();
+        final Map<String, Event> mappedEvents = DataCache.getInstance().getEventMap();
+
+        for (Event event : events) {
             LatLng x = new LatLng(event.getLatitude(), event.getLongitude());
+
             try {
                 Marker markerX = map.addMarker(new MarkerOptions()
                         .position(x)
@@ -130,10 +138,6 @@ public class MapFragment extends Fragment implements
             }
         }
 
-        if (Settings.getInstance().isShowSpouseLines()) {
-            addSpouseLines(map, people, mappedEvents);
-        }
-
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
@@ -141,18 +145,19 @@ public class MapFragment extends Fragment implements
                 map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
                 String eventID = (String) marker.getTag();
+                Event event = mappedEvents.get(eventID);
+                Person person = mappedPeople.get(event.getPersonID());
+
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 Fragment eventDisplay = new EventDisplayFragment();
-
-                Event event = mappedSimpleEvents.get(eventID);
-                Person person = mappedPersons.get(event.getPersonID());
-
                 Bundle arguments = new Bundle();
+
                 arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
                 arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
                 arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
                 arguments.putString(GENDER, person.getGender());
+                arguments.putString(PERSON_ID, person.getPersonID());
                 eventDisplay.setArguments(arguments);
 
                 ft.add(R.id.fragment_container, eventDisplay);
@@ -163,7 +168,7 @@ public class MapFragment extends Fragment implements
     }
 
     // need to fix this, should display the line to the earliest event from the spouse's events
-    private void addSpouseLines(GoogleMap map, Person[] people, Map<PersonIdEventTypeMapKey, Event> mappedEvents) {
+   /* private void addSpouseLines(GoogleMap map, Person[] people, Map<PersonIdEventTypeMapKey, Event> mappedEvents) {
         try {
             ArrayList<Person> peopleCopy = new ArrayList<Person>();
             for (Person person : people) {
@@ -193,7 +198,7 @@ public class MapFragment extends Fragment implements
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
+    }*/
 
     private class PersonIdEventTypeMapKey {
         String mPersonID;
@@ -233,5 +238,34 @@ public class MapFragment extends Fragment implements
         public int hashCode() {
             return Objects.hash(mPersonID, mEventType);
         }
+    }
+
+    private void getAssociatedEvents() {
+        Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            eventMap.put(person.getPersonID(), new ArrayList<Event>());
+        }
+
+        for (Event event : DataCache.getInstance().getEvents()) {
+            eventMap.get(event.getPersonID()).add(event);
+        }
+
+        DataCache.getInstance().setAssociatedEventMap(eventMap);
+    }
+
+    private void getChildren() {
+        Map<String, List<Person>> childrenMap = new HashMap<String, List<Person>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            childrenMap.put(person.getPersonID(), new ArrayList<Person>());
+        }
+
+        for (Person person : DataCache.getInstance().getPersons()) {
+            if (person.getMotherID() != null) {
+                childrenMap.get(person.getMotherID()).add(person);
+                childrenMap.get(person.getFatherID()).add(person);
+            }
+        }
+
+        DataCache.getInstance().setChildrenMap(childrenMap);
     }
 }

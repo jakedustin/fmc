@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <TextView
@@ -72,4 +73,15 @@
         android:background="@android:color/darker_gray"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"/>
+
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/person_activity_expandable_list_view"
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+        android:dividerHeight=".5dp"
+        android:divider="@android:color/darker_gray"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        tools:context=".view.PersonActivity"/>
 </LinearLayout>

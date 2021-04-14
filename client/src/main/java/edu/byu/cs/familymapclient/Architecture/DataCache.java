@@ -1,5 +1,8 @@
 package edu.byu.cs.familymapclient.Architecture;
 
+import java.util.List;
+import java.util.Map;
+
 import Models.Event;
 import Models.Person;
 
@@ -29,6 +32,11 @@ public class DataCache {
     private String mGender;
     private Person[] persons;
     private Event[] events;
+    private Map<String, Float> mColorMap = null;
+    private Map<String, Person> mPeopleMap = null;
+    private Map<String, Event> mEventMap = null;
+    private Map<String, List<Person>> mChildrenMap;
+    private Map<String, List<Event>> mAssociatedEventMap;
 
     public String getPersonID() {
         return mPersonID;
@@ -124,5 +132,45 @@ public class DataCache {
 
     public void setEvents(Event[] events) {
         this.events = events;
+    }
+
+    public Map<String, Float> getColorMap() {
+        return mColorMap;
+    }
+
+    public void setColorMap(Map<String, Float> colors) {
+        this.mColorMap = colors;
+    }
+
+    public Map<String, Person> getPeopleMap() {
+        return mPeopleMap;
+    }
+
+    public void setPeopleMap(Map<String, Person> people) {
+        this.mPeopleMap = people;
+    }
+
+    public Map<String, Event> getEventMap() {
+        return mEventMap;
+    }
+
+    public void setEventMap(Map<String, Event> eventMap) {
+        mEventMap = eventMap;
+    }
+
+    public Map<String, List<Person>> getChildrenMap() {
+        return mChildrenMap;
+    }
+
+    public void setChildrenMap(Map<String, List<Person>> childrenMap) {
+        mChildrenMap = childrenMap;
+    }
+
+    public Map<String, List<Event>> getAssociatedEventMap() {
+        return mAssociatedEventMap;
+    }
+
+    public void setAssociatedEventMap(Map<String, List<Event>> associatedEventMap) {
+        mAssociatedEventMap = associatedEventMap;
     }
 }

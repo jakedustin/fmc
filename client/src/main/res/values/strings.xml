@@ -30,4 +30,6 @@
     <string name="gender">Gender</string>
     <string name="last_name_label">Last Name</string>
     <string name="first_name_label">First Name</string>
+    <string name="person_group_title">Family</string>
+    <string name="event_group_title">Life Events</string>
 </resources>

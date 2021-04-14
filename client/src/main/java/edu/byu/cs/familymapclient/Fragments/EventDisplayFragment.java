@@ -1,5 +1,6 @@
 package edu.byu.cs.familymapclient.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import edu.byu.cs.familymapclient.Activities.PersonActivity;
 import edu.byu.cs.familymapclient.R;
 
 public class EventDisplayFragment extends Fragment {
@@ -19,6 +21,7 @@ public class EventDisplayFragment extends Fragment {
     private final static String EVENT_TYPE = "event_type";
     private final static String EVENT_LOCATION = "event_location";
     private final static String GENDER  = "gender";
+    private final static String PERSON_ID = "person_id";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,10 @@ public class EventDisplayFragment extends Fragment {
             v = inflater.inflate(R.layout.fragment_event_display_male, container, false);
         }
 
-        Bundle bundle = this.getArguments();
+        final Bundle bundle = this.getArguments();
         String personName = bundle.getString(PERSON_NAME);
         String eventType = bundle.getString(EVENT_TYPE);
         String eventLocation = bundle.getString(EVENT_LOCATION);
-        String gender = bundle.getString(GENDER);
 
         TextView mPersonName = (TextView) v.findViewById(R.id.person_name);
         mPersonName.setText(personName);
@@ -50,6 +52,15 @@ public class EventDisplayFragment extends Fragment {
 
         TextView mEventLocation = (TextView) v.findViewById(R.id.event_location);
         mEventLocation.setText(eventLocation);
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PersonActivity.class);
+                intent.putExtra(PERSON_ID, bundle.getString(PERSON_ID));
+                startActivity(intent);
+            }
+        });
 
         return v;
     }
