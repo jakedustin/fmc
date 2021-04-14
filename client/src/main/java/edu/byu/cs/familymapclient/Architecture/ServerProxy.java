@@ -38,7 +38,6 @@ public class ServerProxy {
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                // get login result and return it
                 LoginResult loginResult = gson.fromJson(readString(connection.getInputStream()), LoginResult.class);
                 DataCache.getInstance().setAuthtoken(loginResult.getAuthtoken());
                 DataCache.getInstance().setPersonID(loginResult.getPersonID());
@@ -171,10 +170,6 @@ public class ServerProxy {
             Log.i(SERVER_PROXY, i.getMessage());
         }
     }
-    // http://host:port/[method]
-    // connection.setDoOutput(true);
-    // connection.getOutputStream();
-    // from there it's the same as in the server;
 
     private String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();

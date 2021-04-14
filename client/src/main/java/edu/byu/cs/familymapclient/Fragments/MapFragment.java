@@ -1,5 +1,7 @@
 package edu.byu.cs.familymapclient.Fragments;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +46,8 @@ import edu.byu.cs.familymapclient.Architecture.DataCache;
 import edu.byu.cs.familymapclient.Architecture.Settings;
 import edu.byu.cs.familymapclient.R;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 public class MapFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleMap.OnMapLoadedCallback {
@@ -58,6 +63,7 @@ public class MapFragment extends Fragment implements
     private String eventID;
 
     public MapFragment() {
+
     }
 
     public MapFragment(String eventID) {
@@ -90,7 +96,7 @@ public class MapFragment extends Fragment implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.search_mag_icon:
+            case R.id.menu_item_search:
                 Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
                 startActivity(searchIntent);
                 return true;

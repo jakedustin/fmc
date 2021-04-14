@@ -3,6 +3,7 @@ package edu.byu.cs.familymapclient.Activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -57,6 +58,17 @@ public class PersonActivity extends AppCompatActivity {
 
         expandableListView.setAdapter(new ExpandableListAdapter(getAssociatedPeople(personID), getAssociatedEvents(personID), DataCache.getInstance().getPeopleMap().get(personID)));
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(PersonActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
+        return true;
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {

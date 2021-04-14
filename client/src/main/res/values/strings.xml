@@ -32,4 +32,6 @@
     <string name="first_name_label">First Name</string>
     <string name="person_group_title">Family</string>
     <string name="event_group_title">Life Events</string>
+    <string name="search_hint">Search for...</string>
+    <string name="clear_search">Clear Search</string>
 </resources>
