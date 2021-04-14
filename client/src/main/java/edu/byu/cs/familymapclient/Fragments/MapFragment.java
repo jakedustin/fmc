@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -127,8 +129,12 @@ public class MapFragment extends Fragment implements
             @Override
             public boolean onMarkerClick(Marker marker) {
                 String eventID = (String) marker.getTag();
-                Toast.makeText(getActivity(), eventID, Toast.LENGTH_SHORT).show();
                 map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment eventDisplay = new EventDisplayFragment();
+                ft.add(R.id.fragment_container, eventDisplay);
+                ft.commit();
                 return true;
             }
         });
