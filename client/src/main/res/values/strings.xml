@@ -27,4 +27,7 @@
     <string name="show_male_events">Show male events</string>
     <string name="show_female_events">Show female events</string>
     <string name="logout">Logout</string>
+    <string name="gender">Gender</string>
+    <string name="last_name_label">Last Name</string>
+    <string name="first_name_label">First Name</string>
 </resources>

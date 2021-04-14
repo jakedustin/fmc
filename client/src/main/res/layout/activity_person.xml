@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/person_activity_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="firstname"
+        android:textSize="24sp"
+        android:paddingLeft="20dp" />
+
+    <TextView
+        android:id="@+id/person_activity_first_name_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/first_name_label"
+        android:paddingLeft="20dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+    <TextView
+        android:id="@+id/person_activity_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="lastname"
+        android:textSize="24sp"
+        android:paddingLeft="20dp" />
+
+    <TextView
+        android:id="@+id/person_activity_last_name_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/last_name_label"
+        android:paddingLeft="20dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+    <TextView
+        android:id="@+id/person_activity_gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="gender"
+        android:textSize="24sp"
+        android:paddingLeft="20dp" />
+
+    <TextView
+        android:id="@+id/person_activity_gender_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:text="@string/gender"
+        android:paddingLeft="20dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+</LinearLayout>
