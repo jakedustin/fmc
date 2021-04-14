@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -47,6 +46,10 @@ public class MapFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleMap.OnMapLoadedCallback {
     private GoogleMap map;
+    private final static String PERSON_NAME = "person_name";
+    private final static String EVENT_TYPE = "event_type";
+    private final static String EVENT_LOCATION = "event_location";
+    private final static String GENDER = "gender";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,9 +102,16 @@ public class MapFragment extends Fragment implements
         Person[] people = DataCache.getInstance().getPersons();
 
         Map<String, Float> mappedColors = new HashMap<String, Float>();
+        final Map<String, Person> mappedPersons = new HashMap<String, Person>();
+        final Map<String, Event> mappedSimpleEvents = new HashMap<String, Event>();
         Map<PersonIdEventTypeMapKey, Event> mappedEvents = new HashMap<PersonIdEventTypeMapKey, Event>();
 
+        for (Person person : people) {
+            mappedPersons.put(person.getPersonID(), person);
+        }
+
         for (Event event : events) {
+            mappedSimpleEvents.put(event.getEventID(), event);
             if (!mappedColors.containsKey(event.getEventType().toLowerCase())) {
                 double d = (double) new Random().nextInt(360);
                 mappedColors.put(event.getEventType(), (float) d);
@@ -128,11 +138,23 @@ public class MapFragment extends Fragment implements
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                String eventID = (String) marker.getTag();
                 map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+
+                String eventID = (String) marker.getTag();
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 Fragment eventDisplay = new EventDisplayFragment();
+
+                Event event = mappedSimpleEvents.get(eventID);
+                Person person = mappedPersons.get(event.getPersonID());
+
+                Bundle arguments = new Bundle();
+                arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
+                arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
+                arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
+                arguments.putString(GENDER, person.getGender());
+                eventDisplay.setArguments(arguments);
+
                 ft.add(R.id.fragment_container, eventDisplay);
                 ft.commit();
                 return true;

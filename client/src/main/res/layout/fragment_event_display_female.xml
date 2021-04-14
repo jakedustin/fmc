@@ -15,10 +15,11 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.984">
+        app:layout_constraintVertical_bias="0.984"
+        android:background="@color/white">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/event_display_image"
             android:layout_width="81dp"
             android:layout_height="86dp"
             android:layout_marginStart="20dp"
@@ -27,37 +28,37 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_person_male_foreground" />
+            app:srcCompat="@drawable/ic_person_female_foreground" />
 
         <TextView
             android:id="@+id/person_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="75dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:text="person_name"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/event_display_image"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/event_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="75dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:text="event_type"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/event_display_image"
             app:layout_constraintTop_toBottomOf="@+id/person_name" />
 
         <TextView
             android:id="@+id/event_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="75dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:text="event_location"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/event_display_image"
             app:layout_constraintTop_toBottomOf="@+id/event_type" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
