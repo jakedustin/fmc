@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,18 +33,28 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Intent intent = getIntent();
-        String query;
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra(SearchManager.QUERY);
+        SearchView search = findViewById(R.id.search);
+        String query = search.getQuery().toString();
 
-            RecyclerView recyclerView = findViewById(R.id.RecyclerView);
-            recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-            List<Person> matchingPersons = searchPersons(query);
-            List<Event> matchingEvents = searchEvents(query);
+        final RecyclerView recyclerView = findViewById(R.id.RecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
 
-            SearchAdapter adapter = new SearchAdapter(matchingPersons, matchingEvents);
-        }
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                List<Person> matchingPersons = searchPersons(query);
+                List<Event> matchingEvents = searchEvents(query);
+
+                SearchAdapter adapter = new SearchAdapter(matchingPersons, matchingEvents);
+                recyclerView.setAdapter(adapter);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -171,7 +182,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private List<Event> searchEvents(String query) {
         List<Event> matchingEvents = new ArrayList<Event>() {};
-        for (Event event : DataCache.getInstance().getEvents()) {
+        for (Event event : DataCache.getInstance().getRelevantEvents()) {
             if (event.getCity().toLowerCase().contains(query.toLowerCase())
                 || event.getCountry().toLowerCase().contains(query.toLowerCase())
                 || event.getEventType().toLowerCase().contains(query.toLowerCase())
@@ -182,11 +193,4 @@ public class SearchActivity extends AppCompatActivity {
 
         return matchingEvents;
     }
-
-    //need to get search results (search field?)
-    // for item in persons / events
-    // if item.contains(string)
-    // add item to results and display
-    //build recyclerview out of the search results
-    // split recyclerview into two, one for events and one for people (people first)
 }

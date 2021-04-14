@@ -1,8 +1,12 @@
 package edu.byu.cs.familymapclient.Architecture;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import Models.Event;
 import Models.Person;
@@ -45,6 +49,8 @@ public class DataCache {
     private Map<String, Person> mPeopleMap = null;
     private ArrayList<Event> mMaleOnlyEvents = new ArrayList<Event>();
     private ArrayList<Event> mFemaleOnlyEvents = new ArrayList<Event>();
+    private ArrayList<Event> mFathersSideEvents = new ArrayList<Event>();
+    private ArrayList<Event> mMothersSideEvents = new ArrayList<Event>();
     private Map<String, Event> mEventMap = null;
     private Map<String, List<Person>> mChildrenMap;
     private Map<String, List<Event>> mAssociatedEventMap;
@@ -147,24 +153,6 @@ public class DataCache {
 
     public Event[] getEvents() {
         return events;
-        /*if (Settings.getInstance().isFilterByMaleEvents() && Settings.getInstance().isFilterByFemaleEvents()) {
-            return events;
-        }
-        else if (Settings.getInstance().isFilterByMaleEvents()) {
-            Event[] eventsToReturn = new Event[mMaleOnlyEvents.size()];
-            for (int i = 0; i < mMaleOnlyEvents.size(); ++i) {
-                eventsToReturn[i] = mMaleOnlyEvents.get(i);
-            }
-            return eventsToReturn;
-        }
-        else if (Settings.getInstance().isFilterByFemaleEvents()) {
-            Event[] eventsToReturn = new Event[mFemaleOnlyEvents.size()];
-            for (int i = 0; i < mFemaleOnlyEvents.size(); ++i) {
-                eventsToReturn[i] = mFemaleOnlyEvents.get(i);
-            }
-            return eventsToReturn;
-        }
-        else return new Event[0];*/
     }
 
     public void setEvents(Event[] events) {
@@ -217,6 +205,84 @@ public class DataCache {
 
     public void setFemaleOnlyEvents(ArrayList<Event> femaleOnlyEvents) {
         mFemaleOnlyEvents = femaleOnlyEvents;
+    }
+
+    public void instantiateDataCache() {
+        DataCache.getInstance().setColorMap(new HashMap<String, Float>());
+        DataCache.getInstance().setPeopleMap(new HashMap<String, Person>());
+        DataCache.getInstance().setEventMap(new HashMap<String, Event>());
+        for (Event event : DataCache.getInstance().getEvents()) {
+            if (!DataCache.getInstance().getColorMap().containsKey(event.getEventType().toLowerCase())) {
+                double d = (double) new Random().nextInt(360);
+                DataCache.getInstance().getColorMap().put(event.getEventType().toLowerCase(), (float) d);
+            }
+            DataCache.getInstance().getEventMap().put(event.getEventID(), event);
+        }
+
+        for (Person person : DataCache.getInstance().getPersons()) {
+            DataCache.getInstance().getPeopleMap().put(person.getPersonID(), person);
+        }
+
+        getAssociatedEvents();
+        getChildren();
+        splitEventsByGender();
+    }
+
+    private void splitEventsByGender() {
+        ArrayList<Event> maleEvents = new ArrayList<Event>();
+        ArrayList<Event> femaleEvents = new ArrayList<Event>();
+        for (Event event : DataCache.getInstance().getEvents()) {
+            if (DataCache.getInstance().getPeopleMap().get(event.getPersonID()).getGender().equals("m")) {
+                maleEvents.add(event);
+            }
+            else {
+                femaleEvents.add(event);
+            }
+        }
+
+        DataCache.getInstance().setMaleOnlyEvents(maleEvents);
+        DataCache.getInstance().setFemaleOnlyEvents(femaleEvents);
+    }
+
+    private void getAssociatedEvents() {
+        Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            eventMap.put(person.getPersonID(), new ArrayList<Event>());
+        }
+
+        for (Event event : DataCache.getInstance().getRelevantEvents()) {
+            eventMap.get(event.getPersonID()).add(event);
+        }
+
+        DataCache.getInstance().setAssociatedEventMap(eventMap);
+    }
+
+    private void getChildren() {
+        Map<String, List<Person>> childrenMap = new HashMap<String, List<Person>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            childrenMap.put(person.getPersonID(), new ArrayList<Person>());
+        }
+
+        for (Person person : DataCache.getInstance().getPersons()) {
+            if (person.getMotherID() != null) {
+                childrenMap.get(person.getMotherID()).add(person);
+                childrenMap.get(person.getFatherID()).add(person);
+            }
+        }
+
+        DataCache.getInstance().setChildrenMap(childrenMap);
+    }
+
+    public ArrayList<Event> getRelevantEvents() {
+        Set<Event> relevantEvents = new HashSet<Event>();
+        if (Settings.getInstance().isFilterByMaleEvents()) {
+            relevantEvents.addAll(DataCache.getInstance().getMaleOnlyEvents());
+        }
+        if (Settings.getInstance().isFilterByFemaleEvents()) {
+            relevantEvents.addAll(DataCache.getInstance().getFemaleOnlyEvents());
+        }
+
+        return new ArrayList<Event>(relevantEvents);
     }
 
 }

@@ -286,7 +286,7 @@ public class PersonActivity extends AppCompatActivity {
     private List<Event> getAssociatedEvents(String personID) {
         ArrayList<Event> associatedEvents = new ArrayList<Event>();
 
-        for (Event event : DataCache.getInstance().getEvents()) {
+        for (Event event : DataCache.getInstance().getRelevantEvents()) {
             if (event.getPersonID().equals(personID)) {
                 associatedEvents.add(event);
             }

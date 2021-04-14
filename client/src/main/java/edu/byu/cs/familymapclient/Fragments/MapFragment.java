@@ -32,10 +32,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 import Models.Event;
 import Models.Person;
@@ -119,24 +121,20 @@ public class MapFragment extends Fragment implements
         map = googleMap;
         map.setOnMapLoadedCallback(this);
 
-        Event[] events = DataCache.getInstance().getEvents();
+        setUpMap();
 
-        final Map<String, Person> mappedPeople = DataCache.getInstance().getPeopleMap();
-        final Map<String, Event> mappedEvents = DataCache.getInstance().getEventMap();
+        map.setOnMarkerClickListener(mOnMarkerClickListener);
+    }
 
-        for (Event event : events) {
-            LatLng x = new LatLng(event.getLatitude(), event.getLongitude());
+    GoogleMap.OnMarkerClickListener mOnMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
 
-            Marker markerX = map.addMarker(new MarkerOptions()
-                    .position(x)
-                    .icon(BitmapDescriptorFactory.defaultMarker(DataCache.getInstance().getColorMap().get(event.getEventType().toLowerCase()))));
-            markerX.setTag(event.getEventID());
-        }
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
-        if (init != null) {
-            map.animateCamera(CameraUpdateFactory.newLatLng(init));
-            Event event = mappedEvents.get(eventID);
-            Person person = mappedPeople.get(event.getPersonID());
+            String _eventID = (String) marker.getTag();
+            Event event = DataCache.getInstance().getEventMap().get(_eventID);
+            Person person = DataCache.getInstance().getPeopleMap().get(event.getPersonID());
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -152,107 +150,51 @@ public class MapFragment extends Fragment implements
 
             ft.add(R.id.fragment_container, eventDisplay);
             ft.commit();
+            return true;
         }
+    };
 
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+    @Override
+    public void onResume() {
+        super.onResume();
 
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-
-                String _eventID = (String) marker.getTag();
-                Event event = mappedEvents.get(_eventID);
-                Person person = mappedPeople.get(event.getPersonID());
-
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment eventDisplay = new EventDisplayFragment();
-                Bundle arguments = new Bundle();
-
-                arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
-                arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
-                arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
-                arguments.putString(GENDER, person.getGender());
-                arguments.putString(PERSON_ID, person.getPersonID());
-                eventDisplay.setArguments(arguments);
-
-                ft.add(R.id.fragment_container, eventDisplay);
-                ft.commit();
-                return true;
-            }
-        });
+        if (Settings.settingsHaveChanged()) {
+            map.clear();
+            setUpMap();
+        }
     }
 
-    // need to fix this, should display the line to the earliest event from the spouse's events
-   /* private void addSpouseLines(GoogleMap map, Person[] people, Map<PersonIdEventTypeMapKey, Event> mappedEvents) {
-        try {
-            ArrayList<Person> peopleCopy = new ArrayList<Person>();
-            for (Person person : people) {
-                if (person.getSpouseID() != null) {
-                    peopleCopy.add(person);
-                }
-            }
+    private void setUpMap() {
+        ArrayList<Event> events = DataCache.getInstance().getRelevantEvents();
 
-            Map<PersonIdEventTypeMapKey, Event> parsedEvents = new HashMap<PersonIdEventTypeMapKey, Event>();
+        for (Event event : events) {
+            LatLng x = new LatLng(event.getLatitude(), event.getLongitude());
 
-            for (Person person : peopleCopy) {
-                PersonIdEventTypeMapKey personKey = new PersonIdEventTypeMapKey(person.getPersonID(), "birth");
-                PersonIdEventTypeMapKey spouseKey = new PersonIdEventTypeMapKey(person.getSpouseID(), "birth");
-
-                if ((mappedEvents.containsKey(personKey) && mappedEvents.containsKey(spouseKey))
-                    && !(parsedEvents.containsKey(personKey))) {
-                    Event birthEvent = mappedEvents.get(personKey);
-                    Event spouseBirthEvent = mappedEvents.get(spouseKey);
-
-                    map.addPolyline(new PolylineOptions().add(
-                            new LatLng(birthEvent.getLatitude(), birthEvent.getLongitude()),
-                            new LatLng(spouseBirthEvent.getLatitude(), spouseBirthEvent.getLongitude())));
-
-                    parsedEvents.put(personKey, birthEvent);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }*/
-
-    private class PersonIdEventTypeMapKey {
-        String mPersonID;
-        String mEventType;
-
-        public PersonIdEventTypeMapKey(String personID, String eventType) {
-            mPersonID = personID;
-            mEventType = eventType;
+            Marker markerX = map.addMarker(new MarkerOptions()
+                    .position(x)
+                    .icon(BitmapDescriptorFactory.defaultMarker(DataCache.getInstance().getColorMap().get(event.getEventType().toLowerCase()))));
+            markerX.setTag(event.getEventID());
         }
 
-        public String getPersonID() {
-            return mPersonID;
-        }
+        if (init != null) {
+            map.animateCamera(CameraUpdateFactory.newLatLng(init));
+            Event event = DataCache.getInstance().getEventMap().get(eventID);
+            Person person = DataCache.getInstance().getPeopleMap().get(event.getPersonID());
 
-        public void setPersonID(String personID) {
-            mPersonID = personID;
-        }
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            Fragment eventDisplay = new EventDisplayFragment();
+            Bundle arguments = new Bundle();
 
-        public String getEventType() {
-            return mEventType;
-        }
+            arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
+            arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
+            arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
+            arguments.putString(GENDER, person.getGender());
+            arguments.putString(PERSON_ID, person.getPersonID());
+            eventDisplay.setArguments(arguments);
 
-        public void setEventType(String eventType) {
-            mEventType = eventType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            PersonIdEventTypeMapKey that = (PersonIdEventTypeMapKey) o;
-            return Objects.equals(mPersonID, that.mPersonID) &&
-                    Objects.equals(mEventType, that.mEventType);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(mPersonID, mEventType);
+            ft.add(R.id.fragment_container, eventDisplay);
+            ft.commit();
         }
     }
 }

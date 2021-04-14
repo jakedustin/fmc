@@ -9,6 +9,7 @@ public class Settings {
             instance = new Settings();
         }
 
+        mSettingsHaveChanged = false;
         return instance;
     }
 
@@ -19,14 +20,21 @@ public class Settings {
     boolean mShowLifeStoryLines = false;
     boolean mFilterByFathersSide = false;
     boolean mFilterByMothersSide = false;
-    boolean mFilterByMaleEvents = false;
-    boolean mFilterByFemaleEvents = false;
+    boolean mFilterByMaleEvents = true;
+    boolean mFilterByFemaleEvents = true;
+
+    private static boolean mSettingsHaveChanged;
+
+    public static boolean settingsHaveChanged() {
+        return mSettingsHaveChanged;
+    }
 
     public boolean isShowSpouseLines() {
         return mShowSpouseLines;
     }
 
     public void setShowSpouseLines(boolean showSpouseLines) {
+        mSettingsHaveChanged = true;
         mShowSpouseLines = showSpouseLines;
     }
 
@@ -35,6 +43,7 @@ public class Settings {
     }
 
     public void setShowFamilyTreeLines(boolean showFamilyTreeLines) {
+        mSettingsHaveChanged = true;
         mShowFamilyTreeLines = showFamilyTreeLines;
     }
 
@@ -43,6 +52,7 @@ public class Settings {
     }
 
     public void setShowLifeStoryLines(boolean showLifeStoryLines) {
+        mSettingsHaveChanged = true;
         mShowLifeStoryLines = showLifeStoryLines;
     }
 
@@ -51,6 +61,7 @@ public class Settings {
     }
 
     public void setFilterByFathersSide(boolean filterByFathersSide) {
+        mSettingsHaveChanged = true;
         mFilterByFathersSide = filterByFathersSide;
     }
 
@@ -59,6 +70,7 @@ public class Settings {
     }
 
     public void setFilterByMothersSide(boolean filterByMothersSide) {
+        mSettingsHaveChanged = true;
         mFilterByMothersSide = filterByMothersSide;
     }
 
@@ -67,6 +79,7 @@ public class Settings {
     }
 
     public void setFilterByMaleEvents(boolean filterByMaleEvents) {
+        mSettingsHaveChanged = true;
         mFilterByMaleEvents = filterByMaleEvents;
     }
 
@@ -75,6 +88,7 @@ public class Settings {
     }
 
     public void setFilterByFemaleEvents(boolean filterByFemaleEvents) {
+        mSettingsHaveChanged = true;
         mFilterByFemaleEvents = filterByFemaleEvents;
     }
 }

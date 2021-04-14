@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Searchable
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.SearchActivity"
     android:orientation="vertical"
-    tools:ignore="ExtraText">
-
+    tools:context=".Activities.SearchActivity">
 
     // search view will go here
+
     <SearchView
         android:id="@+id/search"
-        android:showAsAction="collapseActionView|ifRoom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:queryHint="@string/search_box_hint"
+        android:layout_height="54dp"
         android:inputType="textNoSuggestions"
-        />
+        android:queryHint="@string/search_box_hint" />
     // recycler view will go here
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/RecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="InvalidId" />
+        android:layout_height="542dp" />
 
-
-
-</Searchable>
+</LinearLayout>
