@@ -51,6 +51,9 @@
         <activity android:name=".Activities.PersonActivity"
             android:parentActivityName=".Activities.MainActivity">
         </activity>
+        <activity android:name=".Activities.EventActivity"
+            android:parentActivityName=".Activities.MainActivity">
+        </activity>
     </application>
 
 </manifest>

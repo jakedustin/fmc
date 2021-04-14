@@ -52,14 +52,19 @@ public class MapFragment extends Fragment implements
     private final static String EVENT_LOCATION = "event_location";
     private final static String GENDER = "gender";
     private final static String PERSON_ID = "person_id";
+    private final static String EVENT_ID = "event_id";
     private LatLng init = null;
     private boolean displayMenu = true;
+    private String eventID;
 
-    public MapFragment() {}
+    public MapFragment() {
+    }
 
-    public MapFragment(LatLng marker) {
-        init = marker;
+    public MapFragment(String eventID) {
+        init = new LatLng(DataCache.getInstance().getEventMap().get(eventID).getLatitude(),
+                            DataCache.getInstance().getEventMap().get(eventID).getLongitude());
         displayMenu = false;
+        this.eventID = eventID;
     }
 
     @Override
@@ -70,7 +75,7 @@ public class MapFragment extends Fragment implements
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(displayMenu);
         return view;
     }
 
@@ -110,10 +115,6 @@ public class MapFragment extends Fragment implements
 
         Event[] events = DataCache.getInstance().getEvents();
 
-        if (DataCache.getInstance().getColorMap() == null) {
-            setDataCacheValues();
-        }
-
         final Map<String, Person> mappedPeople = DataCache.getInstance().getPeopleMap();
         final Map<String, Event> mappedEvents = DataCache.getInstance().getEventMap();
 
@@ -128,6 +129,23 @@ public class MapFragment extends Fragment implements
 
         if (init != null) {
             map.animateCamera(CameraUpdateFactory.newLatLng(init));
+            Event event = mappedEvents.get(eventID);
+            Person person = mappedPeople.get(event.getPersonID());
+
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            Fragment eventDisplay = new EventDisplayFragment();
+            Bundle arguments = new Bundle();
+
+            arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
+            arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
+            arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
+            arguments.putString(GENDER, person.getGender());
+            arguments.putString(PERSON_ID, person.getPersonID());
+            eventDisplay.setArguments(arguments);
+
+            ft.add(R.id.fragment_container, eventDisplay);
+            ft.commit();
         }
 
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -136,8 +154,8 @@ public class MapFragment extends Fragment implements
             public boolean onMarkerClick(Marker marker) {
                 map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
-                String eventID = (String) marker.getTag();
-                Event event = mappedEvents.get(eventID);
+                String _eventID = (String) marker.getTag();
+                Event event = mappedEvents.get(_eventID);
                 Person person = mappedPeople.get(event.getPersonID());
 
                 FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -192,26 +210,6 @@ public class MapFragment extends Fragment implements
         }
     }*/
 
-    private void setDataCacheValues() {
-        DataCache.getInstance().setColorMap(new HashMap<String, Float>());
-        DataCache.getInstance().setPeopleMap(new HashMap<String, Person>());
-        DataCache.getInstance().setEventMap(new HashMap<String, Event>());
-        for (Event event : DataCache.getInstance().getEvents()) {
-            if (!DataCache.getInstance().getColorMap().containsKey(event.getEventType().toLowerCase())) {
-                double d = (double) new Random().nextInt(360);
-                DataCache.getInstance().getColorMap().put(event.getEventType().toLowerCase(), (float) d);
-            }
-            DataCache.getInstance().getEventMap().put(event.getEventID(), event);
-        }
-
-        for (Person person : DataCache.getInstance().getPersons()) {
-            DataCache.getInstance().getPeopleMap().put(person.getPersonID(), person);
-        }
-
-        getAssociatedEvents();
-        getChildren();
-    }
-
     private class PersonIdEventTypeMapKey {
         String mPersonID;
         String mEventType;
@@ -250,34 +248,5 @@ public class MapFragment extends Fragment implements
         public int hashCode() {
             return Objects.hash(mPersonID, mEventType);
         }
-    }
-
-    private void getAssociatedEvents() {
-        Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
-        for (Person person : DataCache.getInstance().getPersons()) {
-            eventMap.put(person.getPersonID(), new ArrayList<Event>());
-        }
-
-        for (Event event : DataCache.getInstance().getEvents()) {
-            eventMap.get(event.getPersonID()).add(event);
-        }
-
-        DataCache.getInstance().setAssociatedEventMap(eventMap);
-    }
-
-    private void getChildren() {
-        Map<String, List<Person>> childrenMap = new HashMap<String, List<Person>>();
-        for (Person person : DataCache.getInstance().getPersons()) {
-            childrenMap.put(person.getPersonID(), new ArrayList<Person>());
-        }
-
-        for (Person person : DataCache.getInstance().getPersons()) {
-            if (person.getMotherID() != null) {
-                childrenMap.get(person.getMotherID()).add(person);
-                childrenMap.get(person.getFatherID()).add(person);
-            }
-        }
-
-        DataCache.getInstance().setChildrenMap(childrenMap);
     }
 }

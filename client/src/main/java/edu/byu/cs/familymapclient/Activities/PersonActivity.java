@@ -23,6 +23,7 @@ import edu.byu.cs.familymapclient.R;
 public class PersonActivity extends AppCompatActivity {
 
     private static final String PERSON_ID = "person_id";
+    private static final String EVENT_ID = "event_id";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -206,6 +207,15 @@ public class PersonActivity extends AppCompatActivity {
             TextView eventDateView = eventView.findViewById(R.id.list_item_event_date);
             String year = Integer.toString(associatedEvents.get(childPosition).getYear());
             eventDateView.setText(year);
+
+            eventView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), EventActivity.class);
+                    intent.putExtra(EVENT_ID, associatedEvents.get(childPosition).getEventID());
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

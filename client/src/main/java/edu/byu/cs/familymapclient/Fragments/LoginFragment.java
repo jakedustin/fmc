@@ -22,9 +22,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Models.Event;
+import Models.Person;
 import Requests.LoginRequest;
 import Requests.RegisterRequest;
 import edu.byu.cs.familymapclient.Architecture.DataCache;
@@ -211,7 +218,57 @@ public class LoginFragment extends Fragment {
         return v;
     }
 
+    private void instantiateDataCache() {
+        DataCache.getInstance().setColorMap(new HashMap<String, Float>());
+        DataCache.getInstance().setPeopleMap(new HashMap<String, Person>());
+        DataCache.getInstance().setEventMap(new HashMap<String, Event>());
+        for (Event event : DataCache.getInstance().getEvents()) {
+            if (!DataCache.getInstance().getColorMap().containsKey(event.getEventType().toLowerCase())) {
+                double d = (double) new Random().nextInt(360);
+                DataCache.getInstance().getColorMap().put(event.getEventType().toLowerCase(), (float) d);
+            }
+            DataCache.getInstance().getEventMap().put(event.getEventID(), event);
+        }
+
+        for (Person person : DataCache.getInstance().getPersons()) {
+            DataCache.getInstance().getPeopleMap().put(person.getPersonID(), person);
+        }
+
+        getAssociatedEvents();
+        getChildren();
+    }
+
+    private void getAssociatedEvents() {
+        Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            eventMap.put(person.getPersonID(), new ArrayList<Event>());
+        }
+
+        for (Event event : DataCache.getInstance().getEvents()) {
+            eventMap.get(event.getPersonID()).add(event);
+        }
+
+        DataCache.getInstance().setAssociatedEventMap(eventMap);
+    }
+
+    private void getChildren() {
+        Map<String, List<Person>> childrenMap = new HashMap<String, List<Person>>();
+        for (Person person : DataCache.getInstance().getPersons()) {
+            childrenMap.put(person.getPersonID(), new ArrayList<Person>());
+        }
+
+        for (Person person : DataCache.getInstance().getPersons()) {
+            if (person.getMotherID() != null) {
+                childrenMap.get(person.getMotherID()).add(person);
+                childrenMap.get(person.getFatherID()).add(person);
+            }
+        }
+
+        DataCache.getInstance().setChildrenMap(childrenMap);
+    }
+
     private void openMap() {
+        instantiateDataCache();
         Fragment mapFragment = new MapFragment();
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
