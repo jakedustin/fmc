@@ -1,11 +1,13 @@
 package edu.byu.cs.familymapclient.Activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -175,6 +177,22 @@ public class PersonActivity extends AppCompatActivity {
 
             TextView personRelationshipView = personView.findViewById(R.id.list_item_person_relationship);
             personRelationshipView.setText(getRelationship(associatedPeople.get(childPosition)));
+
+            ImageView personIconView = personView.findViewById(R.id.list_item_person_icon);
+            if (associatedPeople.get(childPosition).getGender().equals("m")) {
+                personIconView.setImageResource(R.drawable.ic_person_male_foreground);
+            } else {
+                personIconView.setImageResource(R.drawable.ic_person_female_foreground);
+            }
+
+            personView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), PersonActivity.class);
+                    intent.putExtra(PERSON_ID, associatedPeople.get(childPosition).getPersonID());
+                    startActivity(intent);
+                }
+            });
         }
 
         private void initializeEventView(View eventView, final int childPosition) {
