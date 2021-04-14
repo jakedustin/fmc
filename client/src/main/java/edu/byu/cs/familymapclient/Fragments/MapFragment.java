@@ -134,39 +134,37 @@ public class MapFragment extends Fragment implements
         });
     }
 
+    // need to fix this, should display the line to the earliest event from the spouse's events
     private void addSpouseLines(GoogleMap map, Person[] people, Map<PersonIdEventTypeMapKey, Event> mappedEvents) {
-        ArrayList<Person> peopleCopy = new ArrayList<Person>();
-        for (Person person : people) {
-            if (person.getSpouseID() != null) {
-                peopleCopy.add(person);
+        try {
+            ArrayList<Person> peopleCopy = new ArrayList<Person>();
+            for (Person person : people) {
+                if (person.getSpouseID() != null) {
+                    peopleCopy.add(person);
+                }
             }
+
+            Map<PersonIdEventTypeMapKey, Event> parsedEvents = new HashMap<PersonIdEventTypeMapKey, Event>();
+
+            for (Person person : peopleCopy) {
+                PersonIdEventTypeMapKey personKey = new PersonIdEventTypeMapKey(person.getPersonID(), "birth");
+                PersonIdEventTypeMapKey spouseKey = new PersonIdEventTypeMapKey(person.getSpouseID(), "birth");
+
+                if ((mappedEvents.containsKey(personKey) && mappedEvents.containsKey(spouseKey))
+                    && !(parsedEvents.containsKey(personKey))) {
+                    Event birthEvent = mappedEvents.get(personKey);
+                    Event spouseBirthEvent = mappedEvents.get(spouseKey);
+
+                    map.addPolyline(new PolylineOptions().add(
+                            new LatLng(birthEvent.getLatitude(), birthEvent.getLongitude()),
+                            new LatLng(spouseBirthEvent.getLatitude(), spouseBirthEvent.getLongitude())));
+
+                    parsedEvents.put(personKey, birthEvent);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
-        for (Person person : peopleCopy) {
-            Event birthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getPersonID(), "birth"));
-            Event spouseBirthEvent = mappedEvents.get(new PersonIdEventTypeMapKey(person.getSpouseID(), "birth"));
-
-            Polyline p = map.addPolyline(new PolylineOptions().add(
-                    new LatLng(birthEvent.getLatitude(), birthEvent.getLongitude()),
-                    new LatLng(spouseBirthEvent.getLatitude(), spouseBirthEvent.getLongitude())));
-        }
-
-
-        //need to run through events
-        //on finding a birth event, get the associated person object
-        //get the associated spouse
-        //get associated spouse birth
-        //draw line between births
-        //pop people and births off their associated arrays
-    }
-
-    private Map<String, String> mapPeople(Person[] people) {
-        HashMap<String, String> mappedPeople = new HashMap<String, String>();
-        for (Person person : people) {
-            mappedPeople.put(person.getPersonID(), person.getFirstName() + " " + person.getLastName());
-        }
-
-        return mappedPeople;
     }
 
     private class PersonIdEventTypeMapKey {

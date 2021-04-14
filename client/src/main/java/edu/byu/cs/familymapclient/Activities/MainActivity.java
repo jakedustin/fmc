@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment; // = fm.findFragmentById(R.id.fragment_container);
+        Fragment fragment;
 
         if (DataCache.getInstance().getAuthtoken() == null) {
             fragment = new LoginFragment();
