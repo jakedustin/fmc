@@ -14,13 +14,13 @@ public class Settings {
 
     private Settings() {}
 
-    boolean mShowSpouseLines = true;
-    boolean mShowFamilyTreeLines = true;
-    boolean mShowLifeStoryLines = true;
-    boolean mFilterByFathersSide = true;
-    boolean mFilterByMothersSide = true;
-    boolean mFilterByMaleEvents = true;
-    boolean mFilterByFemaleEvents = true;
+    boolean mShowSpouseLines = false;
+    boolean mShowFamilyTreeLines = false;
+    boolean mShowLifeStoryLines = false;
+    boolean mFilterByFathersSide = false;
+    boolean mFilterByMothersSide = false;
+    boolean mFilterByMaleEvents = false;
+    boolean mFilterByFemaleEvents = false;
 
     public boolean isShowSpouseLines() {
         return mShowSpouseLines;

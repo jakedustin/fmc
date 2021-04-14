@@ -1,14 +1,17 @@
 package edu.byu.cs.familymapclient.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+import edu.byu.cs.familymapclient.Architecture.DataCache;
 import edu.byu.cs.familymapclient.Architecture.Settings;
 import edu.byu.cs.familymapclient.R;
 
@@ -22,13 +25,12 @@ public class SettingsActivity extends AppCompatActivity {
     Switch mMothersSide;
     Switch mMaleEvents;
     Switch mFemaleEvents;
+    Button mLogoutButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-//        getChecks();
 
         View.OnClickListener mOnClickListener = new View.OnClickListener() {
 
@@ -38,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
                 System.out.println("Entered onClick method");
             }
         };
+
         mLifeStoryLines = (Switch) findViewById(R.id.life_story_lines_toggle);
         mLifeStoryLines.setOnClickListener(mOnClickListener);
 
@@ -58,7 +61,19 @@ public class SettingsActivity extends AppCompatActivity {
 
         mFemaleEvents = (Switch) findViewById(R.id.female_events_toggle);
         mFemaleEvents.setOnClickListener(mOnClickListener);
-        //bind all of the buttons here
+
+        mLogoutButton = (Button) findViewById(R.id.logout_button);
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                DataCache.getInstance().logout();
+                startActivity(intent);
+            }
+        });
+
+        getChecks();
     }
 
     private void setChecks() {
@@ -76,11 +91,15 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-/*
     private void getChecks() {
         mLifeStoryLines.setChecked(Settings.getInstance().isShowLifeStoryLines());
+        mFamilyTreeLines.setChecked(Settings.getInstance().isShowFamilyTreeLines());
+        mSpouseLines.setChecked(Settings.getInstance().isShowSpouseLines());
+        mFathersSide.setChecked(Settings.getInstance().isFilterByFathersSide());
+        mMothersSide.setChecked(Settings.getInstance().isFilterByMothersSide());
+        mMaleEvents.setChecked(Settings.getInstance().isFilterByMaleEvents());
+        mFemaleEvents.setChecked(Settings.getInstance().isFilterByFemaleEvents());
     }
-*/
 
 
 }

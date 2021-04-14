@@ -236,6 +236,23 @@ public class LoginFragment extends Fragment {
 
         getAssociatedEvents();
         getChildren();
+        splitEventsByGender();
+    }
+
+    private void splitEventsByGender() {
+        ArrayList<Event> maleEvents = new ArrayList<Event>();
+        ArrayList<Event> femaleEvents = new ArrayList<Event>();
+        for (Event event : DataCache.getInstance().getEvents()) {
+            if (DataCache.getInstance().getPeopleMap().get(event.getPersonID()).getGender().equals("m")) {
+                maleEvents.add(event);
+            }
+            else {
+                femaleEvents.add(event);
+            }
+        }
+
+        DataCache.getInstance().setMaleOnlyEvents(maleEvents);
+        DataCache.getInstance().setFemaleOnlyEvents(femaleEvents);
     }
 
     private void getAssociatedEvents() {

@@ -1,5 +1,6 @@
 package edu.byu.cs.familymapclient.Architecture;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,14 @@ public class DataCache {
 
     private DataCache() {}
 
+    private void close() {
+        instance = null;
+    }
+
+    public void logout() {
+        close();
+    }
+
     private String mAuthtoken;
     private String mPersonID;
     private String mServerHost;
@@ -34,6 +43,8 @@ public class DataCache {
     private Event[] events;
     private Map<String, Float> mColorMap = null;
     private Map<String, Person> mPeopleMap = null;
+    private ArrayList<Event> mMaleOnlyEvents = new ArrayList<Event>();
+    private ArrayList<Event> mFemaleOnlyEvents = new ArrayList<Event>();
     private Map<String, Event> mEventMap = null;
     private Map<String, List<Person>> mChildrenMap;
     private Map<String, List<Event>> mAssociatedEventMap;
@@ -126,8 +137,34 @@ public class DataCache {
         this.persons = persons;
     }
 
+    public ArrayList<Event> getMaleOnlyEvents() {
+        return mMaleOnlyEvents;
+    }
+
+    public ArrayList<Event> getFemaleOnlyEvents() {
+        return mFemaleOnlyEvents;
+    }
+
     public Event[] getEvents() {
         return events;
+        /*if (Settings.getInstance().isFilterByMaleEvents() && Settings.getInstance().isFilterByFemaleEvents()) {
+            return events;
+        }
+        else if (Settings.getInstance().isFilterByMaleEvents()) {
+            Event[] eventsToReturn = new Event[mMaleOnlyEvents.size()];
+            for (int i = 0; i < mMaleOnlyEvents.size(); ++i) {
+                eventsToReturn[i] = mMaleOnlyEvents.get(i);
+            }
+            return eventsToReturn;
+        }
+        else if (Settings.getInstance().isFilterByFemaleEvents()) {
+            Event[] eventsToReturn = new Event[mFemaleOnlyEvents.size()];
+            for (int i = 0; i < mFemaleOnlyEvents.size(); ++i) {
+                eventsToReturn[i] = mFemaleOnlyEvents.get(i);
+            }
+            return eventsToReturn;
+        }
+        else return new Event[0];*/
     }
 
     public void setEvents(Event[] events) {
@@ -173,4 +210,13 @@ public class DataCache {
     public void setAssociatedEventMap(Map<String, List<Event>> associatedEventMap) {
         mAssociatedEventMap = associatedEventMap;
     }
+
+    public void setMaleOnlyEvents(ArrayList<Event> maleOnlyEvents) {
+        mMaleOnlyEvents = maleOnlyEvents;
+    }
+
+    public void setFemaleOnlyEvents(ArrayList<Event> femaleOnlyEvents) {
+        mFemaleOnlyEvents = femaleOnlyEvents;
+    }
+
 }

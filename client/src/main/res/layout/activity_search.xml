@@ -11,16 +11,19 @@
 
     // search view will go here
     <SearchView
+        android:id="@+id/search"
+        android:showAsAction="collapseActionView|ifRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:queryHint="@string/search_box_hint"
         android:inputType="textNoSuggestions"
         />
     // recycler view will go here
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="554dp"
         tools:ignore="InvalidId" />
 
 
