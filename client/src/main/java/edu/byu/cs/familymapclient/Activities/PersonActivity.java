@@ -33,7 +33,26 @@ public class PersonActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String personID = intent.getExtras().getString(PERSON_ID);
 
-        expandableListView.setAdapter(new ExpandableListAdapter(getAssociatedPeople(personID), getAssociatedEvents(personID)));
+        TextView personName = findViewById(R.id.person_activity_first_name);
+        personName.setText(DataCache.getInstance().getPeopleMap().get(personID).getFirstName());
+
+        TextView personLastName = findViewById(R.id.person_activity_last_name);
+        personLastName.setText(DataCache.getInstance().getPeopleMap().get(personID).getLastName());
+
+        TextView personGender = findViewById(R.id.person_activity_gender);
+        String gender;
+
+        String s = DataCache.getInstance().getPeopleMap().get(personID).getGender();
+        if ("f".equals(s)) {
+            gender = "female";
+        } else if ("m".equals(s)) {
+            gender = "male";
+        } else {
+            throw new IllegalArgumentException("Invalid gender entry: " + DataCache.getInstance().getPeopleMap().get(personID).getGender());
+        }
+        personGender.setText(gender);
+
+        expandableListView.setAdapter(new ExpandableListAdapter(getAssociatedPeople(personID), getAssociatedEvents(personID), DataCache.getInstance().getPeopleMap().get(personID)));
 
     }
 
@@ -43,11 +62,13 @@ public class PersonActivity extends AppCompatActivity {
         private static final int EVENT_GROUP_POSITION = 1;
 
         private final List<Person> associatedPeople;
-        private final List<Event> associatedEvents;
+        private List<Event> associatedEvents;
+        private final Person originalPerson;
 
-        ExpandableListAdapter(List<Person> people, List<Event> events) {
+        ExpandableListAdapter(List<Person> people, List<Event> events, Person originalPerson) {
             this.associatedPeople = people;
             this.associatedEvents = events;
+            this.originalPerson = originalPerson;
         }
 
         @Override
@@ -120,20 +141,82 @@ public class PersonActivity extends AppCompatActivity {
                     break;
                 case EVENT_GROUP_POSITION:
                     titleView.setText(R.string.event_group_title);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unrecognized group position: " + groupPosition);
             }
-            return null;
+            return convertView;
         }
 
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            return null;
+            View itemView;
+
+            switch (groupPosition) {
+                case PERSON_GROUP_POSITION:
+                    itemView = getLayoutInflater().inflate(R.layout.list_item_person, parent, false);
+                    initializePersonView(itemView, childPosition);
+                    break;
+                case EVENT_GROUP_POSITION:
+                    itemView = getLayoutInflater().inflate(R.layout.list_item_event, parent, false);
+                    initializeEventView(itemView, childPosition);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unrecognized group position: " + groupPosition);
+            }
+
+            return itemView;
+        }
+
+        private void initializePersonView(View personView, final int childPosition) {
+            TextView personNameView = personView.findViewById(R.id.list_item_person_name);
+            String personName = associatedPeople.get(childPosition).getFirstName() + " " + associatedPeople.get(childPosition).getLastName();
+            personNameView.setText(personName);
+
+            TextView personRelationshipView = personView.findViewById(R.id.list_item_person_relationship);
+            personRelationshipView.setText(getRelationship(associatedPeople.get(childPosition)));
+        }
+
+        private void initializeEventView(View eventView, final int childPosition) {
+            TextView eventTypeView = eventView.findViewById(R.id.list_item_event_type);
+            eventTypeView.setText(associatedEvents.get(childPosition).getEventType());
+
+            TextView eventLocationView = eventView.findViewById(R.id.list_item_event_location);
+            String location = associatedEvents.get(childPosition).getCity() + ", " + associatedEvents.get(childPosition).getCountry();
+            eventLocationView.setText(location);
+
+            TextView eventDateView = eventView.findViewById(R.id.list_item_event_date);
+            String year = Integer.toString(associatedEvents.get(childPosition).getYear());
+            eventDateView.setText(year);
         }
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
+        }
+
+        private String getRelationship(Person relative) {
+            String originalPersonID = originalPerson.getPersonID();
+            String relativePersonID = relative.getPersonID();
+            if (originalPerson.getFatherID() != null) {
+                if (originalPerson.getFatherID().equals(relativePersonID)) {
+                    return "Father";
+                } else if (originalPerson.getMotherID().equals(relativePersonID)) {
+                    return "Mother";
+                }
+            }
+
+            if (originalPerson.getSpouseID() != null) {
+                if (originalPerson.getSpouseID().equals(relativePersonID)) {
+                    return "Spouse";
+                }
+            }
+
+            if (relative.getFatherID().equals(originalPersonID) || relative.getMotherID().equals(originalPersonID)) {
+                return "Child";
+            }
+
+            throw new IllegalArgumentException("This person isn't even closely related ya dum dum");
         }
     }
 
@@ -161,7 +244,13 @@ public class PersonActivity extends AppCompatActivity {
     }
 
     private List<Event> getAssociatedEvents(String personID) {
-        ArrayList<Event> associatedEvents = (ArrayList<Event>) DataCache.getInstance().getAssociatedEventMap().get(personID);
+        ArrayList<Event> associatedEvents = new ArrayList<Event>();
+
+        for (Event event : DataCache.getInstance().getEvents()) {
+            if (event.getPersonID().equals(personID)) {
+                associatedEvents.add(event);
+            }
+        }
 
         return associatedEvents;
     }

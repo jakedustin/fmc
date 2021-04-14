@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import edu.byu.cs.familymapclient.Activities.PersonActivity;
@@ -31,12 +32,15 @@ public class EventDisplayFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v;
+        ConstraintLayout constraintLayout;
 
         if (this.getArguments().getString(GENDER).toLowerCase().equals("f")) {
             v = inflater.inflate(R.layout.fragment_event_display_female, container, false);
+            constraintLayout = v.findViewById(R.id.fragment_event_display_female_box);
         }
         else {
             v = inflater.inflate(R.layout.fragment_event_display_male, container, false);
+            constraintLayout = v.findViewById(R.id.fragment_event_display_male_box);
         }
 
         final Bundle bundle = this.getArguments();
@@ -53,7 +57,7 @@ public class EventDisplayFragment extends Fragment {
         TextView mEventLocation = (TextView) v.findViewById(R.id.event_location);
         mEventLocation.setText(eventLocation);
 
-        v.setOnClickListener(new View.OnClickListener() {
+        constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PersonActivity.class);

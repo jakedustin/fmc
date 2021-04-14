@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:clickable="false"
+        android:id="@+id/fragment_event_display_male_box"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
