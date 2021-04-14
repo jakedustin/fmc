@@ -78,8 +78,8 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="color" value="e286e5" />
-                                                <entry key="imagePath" value="/private/var/folders/7l/p1w9_z8x7mbcbdctcwmp2bt00000gp/T/baseline_person_24.xml" />
+                                                <entry key="color" value="4657e5" />
+                                                <entry key="imagePath" value="/private/var/folders/7l/p1w9_z8x7mbcbdctcwmp2bt00000gp/T/baseline_location_on_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -90,7 +90,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/person/baseline_person_24.xml" />
+                                                <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/location_on/baseline_location_on_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -135,8 +135,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="foregroundAssetType" value="CLIP_ART" />
-                                      <entry key="foregroundLayerName" value="ic_person_female_foreground" />
-                                      <entry key="outputName" value="ic_person_male" />
+                                      <entry key="outputName" value="ic_event_marker" />
                                     </map>
                                   </option>
                                 </PersistentState>
