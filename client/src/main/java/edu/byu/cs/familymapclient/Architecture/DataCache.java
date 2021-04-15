@@ -47,6 +47,8 @@ public class DataCache {
     private Event[] events;
     private Map<String, Float> mColorMap = null;
     private Map<String, Person> mPeopleMap = null;
+    private ArrayList<Person> mMothersSide = new ArrayList<Person>();
+    private ArrayList<Person> mFathersSide = new ArrayList<Person>();
     private ArrayList<Event> mMaleOnlyEvents = new ArrayList<Event>();
     private ArrayList<Event> mFemaleOnlyEvents = new ArrayList<Event>();
     private ArrayList<Event> mFathersSideEvents = new ArrayList<Event>();
@@ -54,6 +56,8 @@ public class DataCache {
     private Map<String, Event> mEventMap = null;
     private Map<String, List<Person>> mChildrenMap;
     private Map<String, List<Event>> mAssociatedEventMap;
+    private static final int FATHERS_SIDE = 0;
+    private static final int MOTHERS_SIDE = 1;
 
     public String getPersonID() {
         return mPersonID;
@@ -195,6 +199,14 @@ public class DataCache {
         return mAssociatedEventMap;
     }
 
+    public ArrayList<Event> getFathersSideEvents() {
+        return mFathersSideEvents;
+    }
+
+    public ArrayList<Event> getMothersSideEvents() {
+        return mMothersSideEvents;
+    }
+
     public void setAssociatedEventMap(Map<String, List<Event>> associatedEventMap) {
         mAssociatedEventMap = associatedEventMap;
     }
@@ -226,6 +238,8 @@ public class DataCache {
         getAssociatedEvents();
         getChildren();
         splitEventsByGender();
+        splitPeopleBySide();
+        splitEventsBySide();
     }
 
     private void splitEventsByGender() {
@@ -242,6 +256,71 @@ public class DataCache {
 
         DataCache.getInstance().setMaleOnlyEvents(maleEvents);
         DataCache.getInstance().setFemaleOnlyEvents(femaleEvents);
+    }
+
+    private void splitPeopleBySide() {
+        Person rootPerson = this.getPeopleMap().get(getPersonID());
+        mMothersSide.add(rootPerson);
+        if (rootPerson.getMotherID() != null) {
+            Person mother = this.getPeopleMap().get(rootPerson.getMotherID());
+            mMothersSide.add(mother);
+            addParents(mother.getPersonID(), MOTHERS_SIDE);
+        }
+
+        mFathersSide.add(rootPerson);
+        if (rootPerson.getFatherID() != null) {
+            Person father = this.getPeopleMap().get(rootPerson.getFatherID());
+            mFathersSide.add(father);
+            addParents(father.getPersonID(), FATHERS_SIDE);
+        }
+    }
+
+    private void splitEventsBySide() {
+        for (Person person : mFathersSide) {
+            for (Event event : events) {
+                if (event.getPersonID().equals(person.getPersonID())) {
+                    mFathersSideEvents.add(event);
+                }
+            }
+        }
+
+        for (Person person : mMothersSide) {
+            for (Event event : events) {
+                if (event.getPersonID().equals(person.getPersonID())) {
+                    mMothersSideEvents.add(event);
+                }
+            }
+        }
+    }
+
+    private void addParents(String personID, int side) {
+        switch(side) {
+            case MOTHERS_SIDE:
+                if (this.getPeopleMap().get(personID).getMotherID() != null) {
+                    Person mother = this.getPeopleMap().get(this.getPeopleMap().get(personID).getMotherID());
+                    mMothersSide.add(mother);
+                    addParents(mother.getPersonID(), MOTHERS_SIDE);
+                }
+                if (this.getPeopleMap().get(personID).getFatherID() != null) {
+                    Person father = this.getPeopleMap().get(this.getPeopleMap().get(personID).getFatherID());
+                    mMothersSide.add(father);
+                    addParents(father.getPersonID(), MOTHERS_SIDE);
+                }
+                break;
+            case FATHERS_SIDE:
+
+                if (this.getPeopleMap().get(personID).getMotherID() != null) {
+                    Person mother = this.getPeopleMap().get(this.getPeopleMap().get(personID).getMotherID());
+                    mFathersSide.add(mother);
+                    addParents(mother.getPersonID(), FATHERS_SIDE);
+                }
+                if (this.getPeopleMap().get(personID).getFatherID() != null) {
+                    Person father = this.getPeopleMap().get(this.getPeopleMap().get(personID).getFatherID());
+                    mFathersSide.add(father);
+                    addParents(father.getPersonID(), FATHERS_SIDE);
+                }
+                break;
+        }
     }
 
     private void getAssociatedEvents() {
@@ -280,6 +359,12 @@ public class DataCache {
         }
         if (Settings.getInstance().isFilterByFemaleEvents()) {
             relevantEvents.addAll(DataCache.getInstance().getFemaleOnlyEvents());
+        }
+        if (Settings.getInstance().isFilterByFathersSide()) {
+            relevantEvents.addAll(DataCache.getInstance().getFathersSideEvents());
+        }
+        if (Settings.getInstance().isFilterByMothersSide()) {
+            relevantEvents.addAll(DataCache.getInstance().getMothersSideEvents());
         }
 
         return new ArrayList<Event>(relevantEvents);

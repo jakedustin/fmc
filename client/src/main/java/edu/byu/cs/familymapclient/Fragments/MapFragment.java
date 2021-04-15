@@ -130,27 +130,29 @@ public class MapFragment extends Fragment implements
 
         @Override
         public boolean onMarkerClick(Marker marker) {
-            map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+            {
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
-            String _eventID = (String) marker.getTag();
-            Event event = DataCache.getInstance().getEventMap().get(_eventID);
-            Person person = DataCache.getInstance().getPeopleMap().get(event.getPersonID());
+                String _eventID = (String) marker.getTag();
+                Event event = DataCache.getInstance().getEventMap().get(_eventID);
+                Person person = DataCache.getInstance().getPeopleMap().get(event.getPersonID());
 
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            Fragment eventDisplay = new EventDisplayFragment();
-            Bundle arguments = new Bundle();
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment eventDisplay = new EventDisplayFragment();
+                Bundle arguments = new Bundle();
 
-            arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
-            arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
-            arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
-            arguments.putString(GENDER, person.getGender());
-            arguments.putString(PERSON_ID, person.getPersonID());
-            eventDisplay.setArguments(arguments);
+                arguments.putString(PERSON_NAME, person.getFirstName() + " " + person.getLastName());
+                arguments.putString(EVENT_TYPE, event.getEventType() + ", " + event.getYear());
+                arguments.putString(EVENT_LOCATION, event.getCity() + ", " + event.getCountry());
+                arguments.putString(GENDER, person.getGender());
+                arguments.putString(PERSON_ID, person.getPersonID());
+                eventDisplay.setArguments(arguments);
 
-            ft.add(R.id.fragment_container, eventDisplay);
-            ft.commit();
-            return true;
+                ft.add(R.id.fragment_container, eventDisplay);
+                ft.commit();
+                return true;
+            }
         }
     };
 
