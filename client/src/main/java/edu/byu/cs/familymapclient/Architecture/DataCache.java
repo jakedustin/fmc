@@ -36,27 +36,16 @@ public class DataCache {
 
     private String mAuthtoken;
     private String mPersonID;
-    private String mServerHost;
-    private int mServerPort;
-    private String mUsername;
-    private String mPassword;
-    private String mFirstName;
-    private String mLastName;
-    private String mEmail;
-    private String mGender;
     private Person[] persons;
     private Event[] events;
     private Map<String, Float> mColorMap = null;
     private Map<String, Person> mPeopleMap = null;
-    private ArrayList<Person> mMothersSide = new ArrayList<Person>();
-    private ArrayList<Person> mFathersSide = new ArrayList<Person>();
-    private ArrayList<Event> mMaleOnlyEvents = new ArrayList<Event>();
-    private ArrayList<Event> mFemaleOnlyEvents = new ArrayList<Event>();
-    private ArrayList<Event> mFathersSideEvents = new ArrayList<Event>();
-    private ArrayList<Event> mMothersSideEvents = new ArrayList<Event>();
+    private final ArrayList<Person> mMothersSide = new ArrayList<Person>();
+    private final ArrayList<Person> mFathersSide = new ArrayList<Person>();
+    private final ArrayList<Event> mFathersSideEvents = new ArrayList<Event>();
+    private final ArrayList<Event> mMothersSideEvents = new ArrayList<Event>();
     private Map<String, Event> mEventMap = null;
-    private Map<String, List<Person>> mChildrenMap;
-    private Map<String, List<Event>> mAssociatedEventMap;
+
     private static final int FATHERS_SIDE = 0;
     private static final int MOTHERS_SIDE = 1;
 
@@ -76,84 +65,12 @@ public class DataCache {
         mAuthtoken = authtoken;
     }
 
-    public String getServerHost() {
-        return mServerHost;
-    }
-
-    public void setServerHost(String serverHost) {
-        mServerHost = serverHost;
-    }
-
-    public int getServerPort() {
-        return mServerPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        mServerPort = serverPort;
-    }
-
-    public String getUsername() {
-        return mUsername;
-    }
-
-    public void setUsername(String username) {
-        mUsername = username;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setPassword(String password) {
-        mPassword = password;
-    }
-
-    public String getFirstName() {
-        return mFirstName;
-    }
-
-    public void setFirstName(String firstName) {
-        mFirstName = firstName;
-    }
-
-    public String getLastName() {
-        return mLastName;
-    }
-
-    public void setLastName(String lastName) {
-        mLastName = lastName;
-    }
-
-    public String getEmail() {
-        return mEmail;
-    }
-
-    public void setEmail(String email) {
-        mEmail = email;
-    }
-
-    public String getGender() {
-        return mGender;
-    }
-
-    public void setGender(String gender) {
-        mGender = gender;
-    }
-
     public Person[] getPersons() {
         return persons;
     }
 
     public void setPersons(Person[] persons) {
         this.persons = persons;
-    }
-
-    public ArrayList<Event> getMaleOnlyEvents() {
-        return mMaleOnlyEvents;
-    }
-
-    public ArrayList<Event> getFemaleOnlyEvents() {
-        return mFemaleOnlyEvents;
     }
 
     public Event[] getEvents() {
@@ -188,36 +105,12 @@ public class DataCache {
         mEventMap = eventMap;
     }
 
-    public Map<String, List<Person>> getChildrenMap() {
-        return mChildrenMap;
-    }
-
-    public void setChildrenMap(Map<String, List<Person>> childrenMap) {
-        mChildrenMap = childrenMap;
-    }
-
-    public Map<String, List<Event>> getAssociatedEventMap() {
-        return mAssociatedEventMap;
-    }
-
     public ArrayList<Event> getFathersSideEvents() {
         return mFathersSideEvents;
     }
 
     public ArrayList<Event> getMothersSideEvents() {
         return mMothersSideEvents;
-    }
-
-    public void setAssociatedEventMap(Map<String, List<Event>> associatedEventMap) {
-        mAssociatedEventMap = associatedEventMap;
-    }
-
-    public void setMaleOnlyEvents(ArrayList<Event> maleOnlyEvents) {
-        mMaleOnlyEvents = maleOnlyEvents;
-    }
-
-    public void setFemaleOnlyEvents(ArrayList<Event> femaleOnlyEvents) {
-        mFemaleOnlyEvents = femaleOnlyEvents;
     }
 
     public void instantiateDataCache() {
@@ -236,27 +129,8 @@ public class DataCache {
             DataCache.getInstance().getPeopleMap().put(person.getPersonID(), person);
         }
 
-        getAssociatedEvents();
-        getChildren();
-        splitEventsByGender();
         splitPeopleBySide();
         splitEventsBySide();
-    }
-
-    private void splitEventsByGender() {
-        ArrayList<Event> maleEvents = new ArrayList<Event>();
-        ArrayList<Event> femaleEvents = new ArrayList<Event>();
-        for (Event event : DataCache.getInstance().getEvents()) {
-            if (DataCache.getInstance().getPeopleMap().get(event.getPersonID()).getGender().equals("m")) {
-                maleEvents.add(event);
-            }
-            else {
-                femaleEvents.add(event);
-            }
-        }
-
-        DataCache.getInstance().setMaleOnlyEvents(maleEvents);
-        DataCache.getInstance().setFemaleOnlyEvents(femaleEvents);
     }
 
     private void splitPeopleBySide() {
@@ -322,35 +196,6 @@ public class DataCache {
                 }
                 break;
         }
-    }
-
-    private void getAssociatedEvents() {
-        Map<String, List<Event>> eventMap = new HashMap<String, List<Event>>();
-        for (Person person : DataCache.getInstance().getPersons()) {
-            eventMap.put(person.getPersonID(), new ArrayList<Event>());
-        }
-
-        for (Event event : DataCache.getInstance().getRelevantEvents()) {
-            eventMap.get(event.getPersonID()).add(event);
-        }
-
-        DataCache.getInstance().setAssociatedEventMap(eventMap);
-    }
-
-    private void getChildren() {
-        Map<String, List<Person>> childrenMap = new HashMap<String, List<Person>>();
-        for (Person person : DataCache.getInstance().getPersons()) {
-            childrenMap.put(person.getPersonID(), new ArrayList<Person>());
-        }
-
-        for (Person person : DataCache.getInstance().getPersons()) {
-            if (person.getMotherID() != null) {
-                childrenMap.get(person.getMotherID()).add(person);
-                childrenMap.get(person.getFatherID()).add(person);
-            }
-        }
-
-        DataCache.getInstance().setChildrenMap(childrenMap);
     }
 
     public ArrayList<Event> getRelevantEvents() {

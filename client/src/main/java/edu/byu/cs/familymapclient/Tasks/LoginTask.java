@@ -12,7 +12,6 @@ import edu.byu.cs.familymapclient.Architecture.ServerProxy;
 public class LoginTask implements Runnable {
     private final Handler mMessageHandler;
     private final LoginRequest mLoginRequest;
-    private LoginResult mLoginResult;
     private final String mServerHost;
     private final String mServerPort;
 
@@ -31,18 +30,17 @@ public class LoginTask implements Runnable {
 
         Message message = Message.obtain();
         Bundle messageBundle = new Bundle();
-        mLoginResult = serverProxy.sendLoginRequest(mServerHost, mServerPort, mLoginRequest);
-        if (mLoginResult.isSuccess()) {
-            DataCache.getInstance().setAuthtoken(mLoginResult.getAuthtoken());
-            DataCache.getInstance().setUsername(mLoginResult.getUsername());
-            DataCache.getInstance().setPersonID(mLoginResult.getPersonID());
+        LoginResult loginResult = serverProxy.sendLoginRequest(mServerHost, mServerPort, mLoginRequest);
+        if (loginResult.isSuccess()) {
+            DataCache.getInstance().setAuthtoken(loginResult.getAuthtoken());
+            DataCache.getInstance().setPersonID(loginResult.getPersonID());
         }
         messageBundle.putBoolean("LOGIN", true);
-        messageBundle.putBoolean(SUCCESS, mLoginResult.isSuccess());
+        messageBundle.putBoolean(SUCCESS, loginResult.isSuccess());
         message.setData(messageBundle);
 
-        serverProxy.sendPersonsRequest(mServerHost, mServerPort, mLoginResult.getAuthtoken());
-        serverProxy.sendEventsRequest(mServerHost, mServerPort, mLoginResult.getAuthtoken());
+        serverProxy.sendPersonsRequest(mServerHost, mServerPort, loginResult.getAuthtoken());
+        serverProxy.sendEventsRequest(mServerHost, mServerPort, loginResult.getAuthtoken());
         this.mMessageHandler.sendMessage(message);
     }
 }

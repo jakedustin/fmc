@@ -156,17 +156,12 @@ public class LoginFragment extends Fragment {
 
                         if (bundle.containsKey("REGISTER")) {
                             if (bundle.getBoolean("SUCCESS")) {
-                                PersonTask personTask = new PersonTask(this, DataCache.getInstance().getAuthtoken(), DataCache.getInstance().getPersonID(), mServerHostField.getText().toString(), mServerPortField.getText().toString());
-                                ExecutorService personExecutor = Executors.newSingleThreadExecutor();
-                                personExecutor.submit(personTask);
+                                submitPersonTask(this);
                             } else {
                                 Toast.makeText(getActivity(), "Registration failed.", Toast.LENGTH_SHORT).show();
                             }
                         }
                         else if (bundle.containsKey("FIRST_NAME")) {
-                            String personName = bundle.getString("FIRST_NAME") + " " + bundle.getString("LAST_NAME");
-
-                            Toast.makeText(getActivity(), personName, Toast.LENGTH_SHORT).show();
                             openMap();
                         }
                     }
@@ -193,17 +188,13 @@ public class LoginFragment extends Fragment {
                         if (bundle.containsKey("LOGIN")) {
                             //put login stuff here
                             if (bundle.getBoolean("SUCCESS")) {
-                                PersonTask personTask = new PersonTask(this, DataCache.getInstance().getAuthtoken(), DataCache.getInstance().getPersonID(), mServerHostField.getText().toString(), mServerPortField.getText().toString());
-                                ExecutorService personExecutor = Executors.newSingleThreadExecutor();
-                                personExecutor.submit(personTask);
+                                submitPersonTask(this);
                             }
                             else {
                                 Toast.makeText(getActivity(), "Login failed.", Toast.LENGTH_SHORT).show();
                             }
                         }
                         else if (bundle.containsKey("FIRST_NAME")) {
-                            String personName = bundle.getString("FIRST_NAME") + " " + bundle.getString("LAST_NAME");
-                            Toast.makeText(getActivity(), personName, Toast.LENGTH_SHORT).show();
                             openMap();
                         }
                     }
@@ -216,6 +207,13 @@ public class LoginFragment extends Fragment {
         });
 
         return v;
+    }
+
+
+    private void submitPersonTask(Handler messageHandler) {
+        PersonTask personTask = new PersonTask(messageHandler, DataCache.getInstance().getAuthtoken(), DataCache.getInstance().getPersonID(), mServerHostField.getText().toString(), mServerPortField.getText().toString());
+        ExecutorService personExecutor = Executors.newSingleThreadExecutor();
+        personExecutor.submit(personTask);
     }
 
     private void openMap() {

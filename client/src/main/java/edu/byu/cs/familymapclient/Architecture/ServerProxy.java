@@ -15,6 +15,7 @@ import java.net.URL;
 
 import Requests.LoginRequest;
 import Requests.RegisterRequest;
+import Results.ClearResult;
 import Results.EventResult;
 import Results.LoginResult;
 import Results.PersonResult;
@@ -41,7 +42,6 @@ public class ServerProxy {
                 LoginResult loginResult = gson.fromJson(readString(connection.getInputStream()), LoginResult.class);
                 DataCache.getInstance().setAuthtoken(loginResult.getAuthtoken());
                 DataCache.getInstance().setPersonID(loginResult.getPersonID());
-                DataCache.getInstance().setUsername(loginResult.getUsername());
                 return loginResult;
             }
             else {
@@ -77,7 +77,6 @@ public class ServerProxy {
                 RegisterResult registerResult = gson.fromJson(readString(connection.getInputStream()), RegisterResult.class);
                 DataCache.getInstance().setAuthtoken(registerResult.getAuthtoken());
                 DataCache.getInstance().setPersonID(registerResult.getPersonID());
-                DataCache.getInstance().setUsername(registerResult.getUsername());
                 return registerResult;
             }
             else {
@@ -108,8 +107,6 @@ public class ServerProxy {
                 // get login result and return it
                 Gson gson = new Gson();
                 PersonResult personResult = gson.fromJson(readString(connection.getInputStream()), PersonResult.class);
-                DataCache.getInstance().setFirstName(personResult.getFirstName());
-                DataCache.getInstance().setLastName(personResult.getLastName());
                 return personResult;
             }
             else {
@@ -168,6 +165,29 @@ public class ServerProxy {
             Log.i(SERVER_PROXY, m.getMessage());
         } catch (IOException i) {
             Log.i(SERVER_PROXY, i.getMessage());
+        }
+    }
+
+    public ClearResult sendClearRequest(String serverHost, String serverPort) {
+        try {
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/clear");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(false);
+            connection.connect();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Gson gson = new Gson();
+                return gson.fromJson(readString(connection.getInputStream()), ClearResult.class);
+            }
+
+            return new ClearResult("Clear failed", false);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return new ClearResult(e.getMessage(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ClearResult(e.getMessage(), false);
         }
     }
 
