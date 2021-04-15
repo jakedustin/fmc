@@ -3,6 +3,7 @@ package edu.byu.cs.familymapclient.Architecture;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -354,20 +355,42 @@ public class DataCache {
 
     public ArrayList<Event> getRelevantEvents() {
         Set<Event> relevantEvents = new HashSet<Event>();
-        if (Settings.getInstance().isFilterByMaleEvents()) {
-            relevantEvents.addAll(DataCache.getInstance().getMaleOnlyEvents());
-        }
-        if (Settings.getInstance().isFilterByFemaleEvents()) {
-            relevantEvents.addAll(DataCache.getInstance().getFemaleOnlyEvents());
-        }
         if (Settings.getInstance().isFilterByFathersSide()) {
             relevantEvents.addAll(DataCache.getInstance().getFathersSideEvents());
         }
         if (Settings.getInstance().isFilterByMothersSide()) {
             relevantEvents.addAll(DataCache.getInstance().getMothersSideEvents());
         }
+        if (!Settings.getInstance().isFilterByMaleEvents()) {
+            for (Iterator<Event> iterator = relevantEvents.iterator(); iterator.hasNext();) {
+                Event event = iterator.next();
+                if (this.getPeopleMap().get(event.getPersonID()).getGender().equals("m")) {
+                    iterator.remove();
+                }
+            }
+        }
+        if (!Settings.getInstance().isFilterByFemaleEvents()) {
+            for (Iterator<Event> iterator = relevantEvents.iterator(); iterator.hasNext();) {
+                Event event = iterator.next();
+                if (this.getPeopleMap().get(event.getPersonID()).getGender().equals("f")) {
+                    iterator.remove();
+                }
+            }
+        }
 
         return new ArrayList<Event>(relevantEvents);
+    }
+
+    public List<Event> getAssociatedEvents(String personID) {
+        ArrayList<Event> associatedEvents = new ArrayList<Event>();
+
+        for (Event event : DataCache.getInstance().getRelevantEvents()) {
+            if (event.getPersonID().equals(personID)) {
+                associatedEvents.add(event);
+            }
+        }
+
+        return associatedEvents;
     }
 
 }

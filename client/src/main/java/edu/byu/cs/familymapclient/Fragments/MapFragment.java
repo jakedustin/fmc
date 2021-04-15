@@ -61,6 +61,7 @@ public class MapFragment extends Fragment implements
     private final static String PERSON_ID = "person_id";
     private final static String EVENT_ID = "event_id";
     private LatLng init = null;
+    private LatLng spouseEvent = null;
     private boolean displayMenu = true;
     private String eventID;
 
@@ -73,6 +74,14 @@ public class MapFragment extends Fragment implements
                             DataCache.getInstance().getEventMap().get(eventID).getLongitude());
         displayMenu = false;
         this.eventID = eventID;
+    }
+
+    public MapFragment(String eventID, LatLng spouseEvent) {
+        init = new LatLng(DataCache.getInstance().getEventMap().get(eventID).getLatitude(),
+                DataCache.getInstance().getEventMap().get(eventID).getLongitude());
+        displayMenu = false;
+        this.eventID = eventID;
+        this.spouseEvent = spouseEvent;
     }
 
     @Override
@@ -180,6 +189,10 @@ public class MapFragment extends Fragment implements
 
         if (init != null) {
             map.animateCamera(CameraUpdateFactory.newLatLng(init));
+
+            if (spouseEvent != null) {
+                map.addPolyline(new PolylineOptions().add(init, spouseEvent));
+            }
             Event event = DataCache.getInstance().getEventMap().get(eventID);
             Person person = DataCache.getInstance().getPeopleMap().get(event.getPersonID());
 

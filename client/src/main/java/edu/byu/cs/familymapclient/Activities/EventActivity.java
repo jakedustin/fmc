@@ -9,6 +9,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import Models.Event;
+import Models.Person;
+import edu.byu.cs.familymapclient.Architecture.DataCache;
+import edu.byu.cs.familymapclient.Architecture.Settings;
 import edu.byu.cs.familymapclient.Fragments.MapFragment;
 import edu.byu.cs.familymapclient.R;
 
@@ -28,9 +34,29 @@ public class EventActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        Fragment mapFragment = new MapFragment(eventID);
+        Fragment mapFragment;
+        if (Settings.getInstance().isShowSpouseLines()) {
+            mapFragment = new MapFragment(eventID, setSpouseLine());
+        } else {
+            mapFragment = new MapFragment(eventID);
+        }
         mapFragment.setArguments(args);
         ft.add(R.id.fragment_container, mapFragment).commit();
+    }
+
+    private LatLng setSpouseLine() {
+        Person thisPerson = DataCache.getInstance().getPeopleMap().get(
+                DataCache.getInstance().getEventMap().get(
+                        getIntent().getStringExtra(EVENT_ID)).getPersonID());
+
+        if (thisPerson.getSpouseID() != null) {
+            Person spouse = DataCache.getInstance().getPeopleMap().get(thisPerson.getSpouseID());
+            if (DataCache.getInstance().getAssociatedEvents(spouse.getPersonID()).get(0) != null) {
+                Event firstEvent = DataCache.getInstance().getAssociatedEvents(spouse.getPersonID()).get(0);
+                return new LatLng(firstEvent.getLatitude(), firstEvent.getLongitude());
+            }
+        }
+        return null;
     }
 
     @Override

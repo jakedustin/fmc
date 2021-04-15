@@ -18,8 +18,8 @@ public class Settings {
     boolean mShowSpouseLines = false;
     boolean mShowFamilyTreeLines = false;
     boolean mShowLifeStoryLines = false;
-    boolean mFilterByFathersSide = false;
-    boolean mFilterByMothersSide = false;
+    boolean mFilterByFathersSide = true;
+    boolean mFilterByMothersSide = true;
     boolean mFilterByMaleEvents = true;
     boolean mFilterByFemaleEvents = true;
 

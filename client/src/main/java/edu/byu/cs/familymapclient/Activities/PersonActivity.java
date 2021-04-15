@@ -56,7 +56,7 @@ public class PersonActivity extends AppCompatActivity {
         }
         personGender.setText(gender);
 
-        expandableListView.setAdapter(new ExpandableListAdapter(getAssociatedPeople(personID), getAssociatedEvents(personID), DataCache.getInstance().getPeopleMap().get(personID)));
+        expandableListView.setAdapter(new ExpandableListAdapter(getAssociatedPeople(personID), DataCache.getInstance().getAssociatedEvents(personID), DataCache.getInstance().getPeopleMap().get(personID)));
 
     }
 
@@ -281,17 +281,5 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         return associatedPeople;
-    }
-
-    private List<Event> getAssociatedEvents(String personID) {
-        ArrayList<Event> associatedEvents = new ArrayList<Event>();
-
-        for (Event event : DataCache.getInstance().getRelevantEvents()) {
-            if (event.getPersonID().equals(personID)) {
-                associatedEvents.add(event);
-            }
-        }
-
-        return associatedEvents;
     }
 }
